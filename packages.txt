@@ -27,3 +27,4 @@ mesa
 ncurses
 unixodbc
 wxwidgets-gtk3
+zoxide

@@ -7,7 +7,7 @@ yay:
 	cd yay && makepkg -si
 	rm -rf yay
 
-packages: install-yay
+packages:
 	yay -Syu --noconfirm
 	yay -S $(PACKAGES) --noconfirm
 
@@ -16,7 +16,8 @@ copy-dotfiles:
 	cp -r $(DOTFILES_DIR)/.config/nvim $(HOME)/.config/nvim || true
 	cp -r $(DOTFILES_DIR)/.config/i3 $(HOME)/.config/i3 || true
 	cp $(DOTFILES_DIR)/tmux/tmux.conf $(HOME)/.tmux.conf
-	cp $(DOTFILES_DIR)/i3/config $(HOME)/.config/i3/
+	cp $(DOTFILES_DIR)/.config/i3/config $(HOME)/.config/i3/
+	cp $(DOTFILES_DIR)/.config/fish/config.fish $(HOME)/.config/fish/
 
 nvim:
 	git clone https://github.com/neovim/neovim.git ~/neovim
@@ -55,4 +56,5 @@ configure:
 	@echo "Initialized setup...await...."
 	@echo "																		 "
 	@echo "																		 "
+
 install: configure yay packages nvim kitty asdf copy-dotfiles
