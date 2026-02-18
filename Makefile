@@ -15,33 +15,32 @@ copy-dotfiles:
 	cp -r $(DOTFILES_DIR)/.config/kitty $(HOME)/.config/kitty || true
 	cp -r $(DOTFILES_DIR)/.config/nvim $(HOME)/.config/nvim || true
 	cp -r $(DOTFILES_DIR)/.config/i3 $(HOME)/.config/i3 || true
-
-i3:
-	yay -Syu i3 i3status i3block -y
-	rm -rf ${HOME}/.config/i3
-	ln -s $(realpath ./i3/) ${HOME}/.config/
-	i3-msg reload || true;
+	cp $(DOTFILES_DIR)/tmux/tmux.conf $(HOME)/.tmux.conf
+	cp $(DOTFILES_DIR)/i3/config $(HOME)/.config/i3/
 
 nvim:
 	git clone https://github.com/neovim/neovim.git ~/neovim
 	cd ~/.neovim && make CMAKE_BUILD_TYPE=Release
 	sudo make install
-	rm -rf ${HOME}/.config/nvim
-	ln -s $(realpath ./nvim/) ${HOME}/.config/nvim
-	curl -fLo ~/.config/nvim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-	nvim -u ${HOME}/.config/nvim/init.vim +PlugInstall +qa
 
 kitty:
-	cd ~/.config/kitty && curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin
+	curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin
+	# Create symbolic links to add kitty and kitten to PATH (assuming ~/.local/bin is in
+	# your system-wide PATH)
+	ln -sf ~/.local/kitty.app/bin/kitty ~/.local/kitty.app/bin/kitten ~/.local/bin/
+	# Place the kitty.desktop file somewhere it can be found by the OS
+	cp ~/.local/kitty.app/share/applications/kitty.desktop ~/.local/share/applications/
+	# If you want to open text files and images in kitty via your file manager also add the kitty-open.desktop file
+	cp ~/.local/kitty.app/share/applications/kitty-open.desktop ~/.local/share/applications/
+	# Update the paths to the kitty and its icon in the kitty desktop file(s)
+	sed -i "s|Icon=kitty|Icon=$(readlink -f ~)/.local/kitty.app/share/icons/hicolor/256x256/apps/kitty.png|g" ~/.local/share/applications/kitty*.desktop
+	sed -i "s|Exec=kitty|Exec=$(readlink -f ~)/.local/kitty.app/bin/kitty|g" ~/.local/share/applications/kitty*.desktop
+	# Make xdg-terminal-exec (and hence desktop environments that support it use kitty)
+	echo 'kitty.desktop' > ~/.config/xdg-terminals.list
 
 asdf:
 	git clone https://aur.archlinux.org/asdf-vm.git && cd asdf-vm && makepkg -si
 
-nerd-fonts:
-	mkdir -p ~/.local/share/fonts
-	cd /tmp && curl -fLo "FiraCode.zip" https://github.com/ryanoasis/nerd-fonts/releases/latest/download/FiraCode.zip
-	unzip -o FiraCode.zip -d ~/.local/share/fonts
-	fc-cache -fv
 
 configure:
 	@echo "  ____        _    __ _ _           "
@@ -49,5 +48,11 @@ configure:
 	@echo " | | | |/ _ \| __| |_| | |/ _ \/ __|"
 	@echo " | |_| | (_) | |_|  _| | |  __/\__ \\"
 	@echo " |____/ \___/ \__|_| |_|_|\___||___/"
-
-install: configure yay packages copy-dotfiles nvim kitty i3 asdf nerd-fonts
+	@echo "																		 "
+	@echo "																		 "
+	@echo "																		 "
+	@echo "																		 "
+	@echo "Initialized setup...await...."
+	@echo "																		 "
+	@echo "																		 "
+install: configure yay packages nvim kitty asdf copy-dotfiles
