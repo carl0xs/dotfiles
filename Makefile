@@ -12,12 +12,11 @@ packages:
 	yay -S $(PACKAGES) --noconfirm
 
 copy-dotfiles:
-	cp -r $(DOTFILES_DIR)/.config/kitty $(HOME)/.config/kitty || true
-	cp -r $(DOTFILES_DIR)/.config/nvim $(HOME)/.config/nvim || true
-	cp -r $(DOTFILES_DIR)/.config/i3 $(HOME)/.config/i3 || true
-	cp $(DOTFILES_DIR)/tmux/tmux.conf $(HOME)/.tmux.conf
-	cp $(DOTFILES_DIR)/.config/i3/config $(HOME)/.config/i3/
-	cp $(DOTFILES_DIR)/.config/fish/config.fish $(HOME)/.config/fish/
+	ln -sf $(DOTFILES_DIR)/.config/kitty $(HOME)/.config/kitty || true
+	ln -sf $(DOTFILES_DIR)/.config/i3 $(HOME)/.config/i3 || true
+	ln -sf $(DOTFILES_DIR)/tmux/tmux.conf $(HOME)/.tmux.conf
+	ln -sf $(DOTFILES_DIR)/.config/i3/config $(HOME)/.config/i3/
+	ln -sf $(DOTFILES_DIR)/.config/fish/config.fish $(HOME)/.config/fish/
 
 nvim:
 	git clone https://github.com/neovim/neovim.git ~/neovim
@@ -42,6 +41,9 @@ kitty:
 asdf:
 	git clone https://aur.archlinux.org/asdf-vm.git && cd asdf-vm && makepkg -si
 
+nvim-labs:
+	git clone git@github.com:carl0xs/nvim-labs.git ~/.config/nvim-labs && sh ~/.config/nvim-labs/setup.sh
+
 
 configure:
 	@echo "  ____        _    __ _ _           "
@@ -57,4 +59,4 @@ configure:
 	@echo "																		 "
 	@echo "																		 "
 
-install: configure yay packages nvim kitty asdf copy-dotfiles
+install: configure yay packages nvim kitty asdf copy-dotfiles nvim-labs

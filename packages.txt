@@ -28,3 +28,4 @@ ncurses
 unixodbc
 wxwidgets-gtk3
 zoxide
+jq
