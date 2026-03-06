@@ -1,4 +1,5 @@
-source ~/.aliases
+source ~/.config/fish/aliases
+
 zoxide init fish | source
 
 if test -z $ASDF_DATA_DIR
@@ -13,5 +14,7 @@ if not contains $_asdf_shims $PATH
     set -gx --prepend PATH $_asdf_shims
 end
 set --erase _asdf_shims
+
 fish_add_path $HOME/.asdf/shims
+
 export PATH="$HOME/.local/bin:$PATH"

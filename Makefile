@@ -1,5 +1,6 @@
 DOTFILES_DIR = $(HOME)/.dotfiles
 PACKAGES = $(shell cat $(DOTFILES_DIR)/packages.txt)
+STOW_PACKAGES = aliases fish git i3 kitty picom polybar tmux
 
 yay:
 	sudo pacman -S --needed git base-devel
@@ -12,11 +13,13 @@ packages:
 	yay -S $(PACKAGES) --noconfirm
 
 copy-dotfiles:
-	ln -sf $(DOTFILES_DIR)/.config/kitty $(HOME)/.config/kitty || true
-	ln -sf $(DOTFILES_DIR)/.config/i3 $(HOME)/.config/i3 || true
-	ln -sf $(DOTFILES_DIR)/tmux/tmux.conf $(HOME)/.tmux.conf
-	ln -sf $(DOTFILES_DIR)/.config/i3/config $(HOME)/.config/i3/
-	ln -sf $(DOTFILES_DIR)/.config/fish/config.fish $(HOME)/.config/fish/
+	stow --restow --target=$(HOME) --dir=$(DOTFILES_DIR) $(STOW_PACKAGES)
+
+migrate-dotfiles:
+	stow --adopt --restow --target=$(HOME) --dir=$(DOTFILES_DIR) $(STOW_PACKAGES)
+
+unstow-dotfiles:
+	stow --delete --target=$(HOME) --dir=$(DOTFILES_DIR) $(STOW_PACKAGES)
 
 nvim:
 	git clone https://github.com/neovim/neovim.git ~/neovim
